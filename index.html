@@ -3,7 +3,7 @@
 <head>
 <title>Landing Page</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<style type="text/css">
+<style>
   html, body {
     width: 100vw;
     height: 100vh;
@@ -11,71 +11,64 @@
     padding: 0;
     overflow: hidden;
     background: #f4b475;
-    box-sizing: border-box;
-    -webkit-user-select: none;
-    user-select: none;
   }
-  #bgimg {
-    position: fixed;
+  .bg-container {
+    position: absolute;
     top: 0; left: 0;
     width: 100vw;
     height: 100vh;
-    background-image: url('https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: top center;
+    overflow: hidden;
+  }
+  .bg-img {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    user-drag: none;
+    -webkit-user-drag: none;
     transform: scale(1.15);
     transform-origin: top center;
-    z-index: 1;
-    pointer-events: none;
-    -webkit-user-drag: none;
-    user-drag: none;
   }
   @media (max-width: 800px) {
-    #bgimg {
+    .bg-img {
       transform: scale(1.6675);
     }
   }
-  #overlay {
-    position: fixed;
+  .banners {
+    position: absolute;
     top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: 2;
-    pointer-events: auto;
-    background: transparent;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
   }
   .banner-link {
     position: absolute;
-    z-index: 10;
     display: block;
     width: 21%;
     height: 3.5%;
     background: rgba(255,0,0,0.5);
-    cursor: pointer;
     border-radius: 6px;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 10;
   }
-  .left-box {
-    right: 50%;
-    margin-right: 33px;
-  }
-  .right-box {
-    left: 50%;
-    margin-left: 50px;
-  }
-  body { cursor: url('data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]'); }
+  /* Adjusted positions as requested */
+  .banner-ethos   { top: calc(28% + 30px); left: calc(14% + 15px); }
+  .banner-engage  { top: calc(28% + 30px); right: calc(14% + 15px); }
+  .banner-oeuvre  { top: calc(55% - 40px); left: calc(14% + 15px); }
+  .banner-tome    { top: calc(55% - 40px); right: calc(14% + 15px); }
 </style>
 </head>
 <body>
-<div id="bgimg" aria-hidden="true"></div>
-<div id="overlay">
-  <!-- Upper Left: ethos.html -->
-  <a class="banner-link left-box" href="ethos.html" style="top:calc(28% + 60px);"></a>
-  <!-- Upper Right: engage.html -->
-  <a class="banner-link right-box" href="engage.html" style="top:calc(28% + 60px);"></a>
-  <!-- Lower Left: oeuvre.html -->
-  <a class="banner-link left-box" href="oeuvre.html" style="top:calc(43% + 20px);"></a>
-  <!-- Lower Right: tome.html -->
-  <a class="banner-link right-box" href="tome.html" style="top:calc(43% + 20px);"></a>
+<div class="bg-container">
+  <img class="bg-img" src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Background" />
+  <div class="banners">
+    <a class="banner-link banner-ethos" href="ethos.html" title="Ethos"></a>
+    <a class="banner-link banner-engage" href="engage.html" title="Engage"></a>
+    <a class="banner-link banner-oeuvre" href="oeuvre.html" title="Oeuvre"></a>
+    <a class="banner-link banner-tome" href="tome.html" title="Tome"></a>
+  </div>
 </div>
 </body>
 </html>
