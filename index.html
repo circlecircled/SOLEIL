@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Landing Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
   html, body {
     width: 100vw;
@@ -10,18 +11,32 @@
     padding: 0;
     background-color: #f4b475;
     overflow: hidden;
+    box-sizing: border-box;
+  }
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
   img.fullscreen-img {
+    position: fixed;
+    top: 0; left: 0;
     width: 100vw;
     height: 100vh;
     object-fit: cover;
+    object-position: top;
     display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    max-width: none;
+    max-height: none;
+    user-select: none;
+    pointer-events: none;
   }
 </style>
 </head>
 <body>
 
-<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Homepage 1" class="fullscreen-img">
+<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Homepage 1" class="fullscreen-img" draggable="false" oncontextmenu="return false;">
 
 </body>
 </html>
