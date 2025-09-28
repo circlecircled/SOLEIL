@@ -3,23 +3,32 @@
 <head>
 <title>Landing Page</title>
 <style>
-  body {
-    background-color: #f4b475;
+  html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+    background-color: #f4b475;
   }
-  img.centered-img {
+  body {
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+  }
+  img.fullscreen-img {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    height: auto;
+  }
+  /* Optional: hide scrollbars caused by 100vw/100vh */
+  ::-webkit-scrollbar {
+    display: none;
   }
 </style>
 </head>
 <body>
 
-<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Homepage 1" class="centered-img">
+<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Homepage 1" class="fullscreen-img">
 
 <h1>hi stranger</h1>
 <p>more info coming soon.</p>
