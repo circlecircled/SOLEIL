@@ -9,56 +9,47 @@
     height: 100vh;
     margin: 0;
     padding: 0;
-    background-color: #f4b475;
     overflow: hidden;
+    background: #f4b475;
     box-sizing: border-box;
-  }
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  img.fullscreen-img {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    object-position: top;
-    display: block;
-    margin: 0;
-    padding: 0;
-    border: none;
-    max-width: none;
-    max-height: none;
+    -webkit-user-select: none;
     user-select: none;
-    pointer-events: none;
   }
-  /* Overlay to block interaction */
-  .overlay-blocker {
+  #bgimg {
     position: fixed;
     top: 0; left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 10;
-    background: transparent;
-    pointer-events: auto;
+    background-image: url('https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top center;
+    /* Default zoom for desktop */
+    transform: scale(1.25);
+    transform-origin: top center;
+    z-index: 1;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-drag: none;
   }
-  /* Mobile: Zoom image more and adjust position if needed */
-  @media (max-width: 600px) {
-    img.fullscreen-img {
-      transform: scale(1.25);
-      transform-origin: top center;
+  @media (max-width: 800px) {
+    #bgimg {
+      /* More zoom on mobile */
+      transform: scale(1.45);
     }
+  }
+  #overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 2;
+    pointer-events: auto;
+    background: transparent;
   }
 </style>
 </head>
 <body>
-
-<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png"
-     alt="Homepage 1"
-     class="fullscreen-img"
-     draggable="false"
-     oncontextmenu="return false;">
-<div class="overlay-blocker"></div>
-
+<div id="bgimg" aria-hidden="true"></div>
+<div id="overlay"></div>
 </body>
 </html>
