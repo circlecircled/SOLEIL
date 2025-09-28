@@ -24,8 +24,8 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: top center;
-    /* Default zoom for desktop */
-    transform: scale(1.25);
+    /* Default zoom for desktop: 1.25 * 1.15 = 1.4375 */
+    transform: scale(1.4375);
     transform-origin: top center;
     z-index: 1;
     pointer-events: none;
@@ -34,8 +34,8 @@
   }
   @media (max-width: 800px) {
     #bgimg {
-      /* More zoom on mobile */
-      transform: scale(1.45);
+      /* More zoom on mobile: 1.45 * 1.15 = 1.6675 */
+      transform: scale(1.6675);
     }
   }
   #overlay {
