@@ -22,6 +22,7 @@
     width: 100vw;
     height: 100vh;
     object-fit: cover;
+    object-position: top;
     display: block;
     margin: 0;
     padding: 0;
@@ -31,11 +32,33 @@
     user-select: none;
     pointer-events: none;
   }
+  /* Overlay to block interaction */
+  .overlay-blocker {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    background: transparent;
+    pointer-events: auto;
+  }
+  /* Mobile: Zoom image more and adjust position if needed */
+  @media (max-width: 600px) {
+    img.fullscreen-img {
+      transform: scale(1.25);
+      transform-origin: top center;
+    }
+  }
 </style>
 </head>
 <body>
 
-<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Homepage 1" class="fullscreen-img" draggable="false" oncontextmenu="return false;">
+<img src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png"
+     alt="Homepage 1"
+     class="fullscreen-img"
+     draggable="false"
+     oncontextmenu="return false;">
+<div class="overlay-blocker"></div>
 
 </body>
 </html>
