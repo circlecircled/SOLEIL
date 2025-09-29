@@ -5,40 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
   html, body {
-    width: 100vw;
-    height: 100vh;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    height: 100vh;
     background: #f4b475;
-  }
-  .bg-container {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
     overflow: hidden;
   }
-  .image-relative {
-    position: relative;
+  .image-container {
+    position: absolute;
+    top: 50%; left: 50%;
     width: 100vw;
-    height: 100vh;
+    max-width: 2220px;
+    transform: translate(-50%, -50%);
+    aspect-ratio: 1 / 1; /* Adjust if your image is not square */
+    background: transparent;
+    box-shadow: 0 0 50px rgba(0,0,0,.03);
   }
-  .bg-img {
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
+  .img-bg {
+    width: 222%;
+    height: 222%;
     display: block;
-    pointer-events: none;
+    object-fit: cover;
+    object-position: top center;
     user-drag: none;
     -webkit-user-drag: none;
-    transform: scale(1.15);
-    transform-origin: top center;
-  }
-  @media (max-width: 800px) {
-    .bg-img {
-      transform: scale(1.6675);
-    }
+    pointer-events: none;
+    position: absolute;
+    top: -61%; left: -61%; /* Center the oversize image */
   }
   .banner-link {
     position: absolute;
@@ -47,27 +40,27 @@
     height: 3.5%;
     background: rgba(255,0,0,0.5);
     border-radius: 6px;
-    pointer-events: auto;
     cursor: pointer;
     z-index: 10;
+    pointer-events: auto;
   }
-  /* Position these as percentages of the image container, not the viewport */
+  /* Example positions: set as percent of image container */
   .banner-ethos   { top: 36%; left: 20%; }
   .banner-engage  { top: 36%; right: 18%; }
   .banner-oeuvre  { top: 45%; left: 20%; }
   .banner-tome    { top: 45%; right: 18%; }
+  @media (max-width: 600px) {
+    .image-container { width: 98vw; }
+  }
 </style>
 </head>
 <body>
-<div class="bg-container">
-  <div class="image-relative">
-    <img class="bg-img" src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Background" />
-    <!-- Buttons are children of the same relative container as the image! -->
-    <a class="banner-link banner-ethos" href="ethos.html" title="Ethos"></a>
-    <a class="banner-link banner-engage" href="engage.html" title="Engage"></a>
-    <a class="banner-link banner-oeuvre" href="oeuvre.html" title="Oeuvre"></a>
-    <a class="banner-link banner-tome" href="tome.html" title="Tome"></a>
-  </div>
+<div class="image-container">
+  <img class="img-bg" src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Background" draggable="false"/>
+  <a class="banner-link banner-ethos" href="ethos.html" title="Ethos"></a>
+  <a class="banner-link banner-engage" href="engage.html" title="Engage"></a>
+  <a class="banner-link banner-oeuvre" href="oeuvre.html" title="Oeuvre"></a>
+  <a class="banner-link banner-tome" href="tome.html" title="Tome"></a>
 </div>
 </body>
 </html>
