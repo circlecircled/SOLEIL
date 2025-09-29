@@ -1,32 +1,147 @@
-<!DOCTYPE html>
-<html>
+\<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>hey stranger</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      display: flex;
+      background: #00141d;
+      overflow: hidden;
+    }
+
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #f4f1e6;
-      color: #222;
-      padding: 3em 1em;
-      max-width: 650px;
-      margin: 0 auto;
+      width: 100%;
+      margin: auto;
     }
-    h1 {
-      font-size: 2em;
-      font-weight: normal;
-      margin-bottom: 1.5em;
-      letter-spacing: 1.5px;
+
+    .spiral-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
     }
-    p {
-      font-size: 1.2em;
-      line-height: 1.7;
-      letter-spacing: 0.2px;
+
+    .spiral-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 280px;
+      height: 450px;
+      margin-top: -225px;
+      margin-left: -140px;
+      transform-origin: center bottom;
+      animation: spiral 120s linear infinite, fade 110s linear infinite both;
+    }
+
+    
+
+    .trapezoid {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .trapezoid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.15);
+      clip-path: polygon(5% 0%, 95% 0%, 70% 100%, 30% 100%);
+      border-radius: 100px;
+    }
+    
+
+    @keyframes spiral {
+      0% {
+        transform: scale(0.05) rotate(0turn) translateY(0);
+      }
+      100% {
+        transform: scale(1.8) rotate(-2.5turn) translateY(calc(-5vh - 500px));
+      }
+    }
+
+    @keyframes fade {
+      0%, 10% { 
+        opacity: 0;
+      }
+      25%, 40% { 
+        opacity: 1;
+      }
+      50%, 100% {
+        opacity: 0;
+      }
+    }
+
     }
   </style>
+  
 </head>
 <body>
-  <h1>hey stranger</h1>
-  <p>sometimes when I'm feeling lost, I try to find the lowest point in my area, because that's usually where there's a body of water. maybe you should try that.</p>
+  <div class="spiral-container" id="spiralContainer">
+    <div class="pause-zone" id="pauseZone"></div>
+  </div>
+
+  <script>
+    const container = document.getElementById('spiralContainer');
+    
+    const imageUrls = [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1484406566174-9da000fda645?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1465056836041-7f43ac27dcb5?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1540206395-68808572332f?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=400&h=600&fit=crop'
+    ];
+
+    const totalItems = imageUrls.length;
+    const duration = 120;
+
+    imageUrls.forEach((url, index) => {
+      const item = document.createElement('div');
+      item.className = 'spiral-item';
+      
+      const trapezoid = document.createElement('div');
+      trapezoid.className = 'trapezoid';
+      
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `Image ${index + 1}`;
+      
+      trapezoid.appendChild(img);
+      item.appendChild(trapezoid);
+      
+      const percent = index / totalItems;
+      
+      item.style.animationDelay = `${-1.5 * duration + duration * percent}s, ${-0.5 * duration + duration * percent}s`;
+      
+      container.appendChild(item);
+    });
+  </script>
 </body>
 </html>
