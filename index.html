@@ -19,6 +19,11 @@
     height: 100vh;
     overflow: hidden;
   }
+  .image-relative {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
   .bg-img {
     width: 100vw;
     height: 100vh;
@@ -35,13 +40,6 @@
       transform: scale(1.6675);
     }
   }
-  .banners {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-  }
   .banner-link {
     position: absolute;
     display: block;
@@ -53,18 +51,18 @@
     cursor: pointer;
     z-index: 10;
   }
-  /* Top row */
+  /* Position these as percentages of the image container, not the viewport */
   .banner-ethos   { top: 36%; left: 20%; }
   .banner-engage  { top: 36%; right: 18%; }
-  /* Bottom row */
   .banner-oeuvre  { top: 45%; left: 20%; }
   .banner-tome    { top: 45%; right: 18%; }
 </style>
 </head>
 <body>
 <div class="bg-container">
-  <img class="bg-img" src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Background" />
-  <div class="banners">
+  <div class="image-relative">
+    <img class="bg-img" src="https://raw.githubusercontent.com/circlecircled/images/main/homepage1.png" alt="Background" />
+    <!-- Buttons are children of the same relative container as the image! -->
     <a class="banner-link banner-ethos" href="ethos.html" title="Ethos"></a>
     <a class="banner-link banner-engage" href="engage.html" title="Engage"></a>
     <a class="banner-link banner-oeuvre" href="oeuvre.html" title="Oeuvre"></a>
