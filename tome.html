@@ -1,32 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>hey stranger</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #f4f1e6;
-      color: #222;
-      padding: 3em 1em;
-      max-width: 650px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 2em;
-      font-weight: normal;
-      margin-bottom: 1.5em;
-      letter-spacing: 1.5px;
-    }
-    p {
-      font-size: 1.2em;
-      line-height: 1.7;
-      letter-spacing: 0.2px;
-    }
-  </style>
-</head>
-<body>
-  <h1>hey stranger</h1>
-  <p>sometimes when I'm feeling lost, I try to find the lowest point in my area, because that's usually where there's a body of water. maybe you should try that.</p>
+  <title>SOLEIL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+  <link rel="stylesheet" href="cursor.css">
+</head>html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #f7a048;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.image-wrapper {
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  width: 500vw;
+  height: 180vh;
+  min-width: 100vw;
+  min-height: 100vh;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  overflow: visible;
+}
+
+@media (max-width: 600px) {
+  .image-wrapper {
+     <div id="banner-nav-container"></div>
+ fetch('banner-nav.html')
+     .then(response => response.text())
+     .then(data => {
+       document.getElementById('banner-nav-container').innerHTML = data;
+     });
+    top: 0;
+    transform: translate(-50%, 0);
+  }
+}
+
+.img-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top center;
+  display: block;
+  user-drag: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  z-index: 1;
+}
+  <body>
+<div class="image-wrapper" id="img-wrap">
+  <img id="main-image" class="img-bg" src="https://raw.githubusercontent.com/circlecircled/images/main/Untitled_Artwork%2016.png" alt="Background" draggable="false"/>
+</div>
 </body>
 </html>
