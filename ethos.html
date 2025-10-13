@@ -3,7 +3,8 @@
 <head>
   <title>SOLEIL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
   <style>
     html, body {
       margin: 0;
@@ -49,19 +50,30 @@
     .banner-link {
       position: absolute;
       display: block;
-      width: 10%;
-      height: 1%;
-      background: rgba(,0,0,0.5);
+      width: 7vw;
+      min-width: 50px;
+      height: 2.6vw;
+      min-height: 28px;
+      background: transparent;
       border-radius: 6px;
       pointer-events: auto;
       cursor: pointer;
       z-index: 10;
-    }
-    body {
-      cursor: url('data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]');
+      margin: 0;
+      border: none;
+      opacity: 0.92;
+      text-decoration: none;
+      transition: background 0.2s;
+      color: transparent;
+      font-size: 0;
+      line-height: 0;
     }
     .banner-link:hover {
-      cursor: url('data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]');
+      background: transparent;
+      
+    }
+    body {
+      cursor: default;
     }
   </style>
 </head>
@@ -70,16 +82,20 @@
   <img id="main-image" class="img-bg" src="https://raw.githubusercontent.com/circlecircled/images/main/Untitled_Artwork%2016.png" alt="Background" draggable="false"/>
   <a id="banner-ethos" class="banner-link" href="ethos.html" title="Ethos"></a>
   <a id="banner-engage" class="banner-link" href="engage.html" title="Engage"></a>
+  <a id="banner-home" class="banner-link" href="index.html" title="Home"></a>
   <a id="banner-oeuvre" class="banner-link" href="oeuvre.html" title="Oeuvre"></a>
   <a id="banner-tome" class="banner-link" href="tome.html" title="Tome"></a>
+  
 </div>
 <script>
 const banners = [
-  { id: 'banner-ethos',   top: 0.223, left: 0.32 },
-  { id: 'banner-engage',  top: 0.226, left: null, right: 0.3 },
-  { id: 'banner-oeuvre',  top: 0.28, left: 0.32 },
-  { id: 'banner-tome',    top: 0.28, left: null, right: 0.3 },
+  { id: 'banner-ethos',   left: 0.12 },
+  { id: 'banner-oeuvre',  left: 0.25 },
+  { id: 'banner-home',  left: 0.45 },
+  { id: 'banner-engage',    left: 0.64 },
+  { id: 'banner-tome',     left: 0.77 }
 ];
+
 function positionBanners() {
   const img = document.getElementById('main-image');
   const wrapper = img.parentElement;
@@ -97,19 +113,14 @@ function positionBanners() {
   }
   const xOffset = (wrapperRect.width - displayWidth) / 2;
   const yOffset = (wrapperRect.height - displayHeight) / 2;
-  banners.forEach(({id, top, left, right}) => {
+  const top = yOffset + displayHeight * 0.03;
+  banners.forEach(({id, left}) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.style.top = (yOffset + displayHeight * top) + "px";
-    if (left !== null && left !== undefined) {
-      el.style.left = (xOffset + displayWidth * left) + "px";
-      el.style.right = "";
-    } else if (right !== null && right !== undefined) {
-      el.style.left = "";
-      el.style.right = (xOffset + displayWidth * right) + "px";
-    }
-    el.style.width = (displayWidth * 0.14) + "px";
-    el.style.height = (displayHeight * 0.022) + "px";
+    el.style.top = top + "px";
+    el.style.left = (xOffset + displayWidth * left) + "px";
+    el.style.width = (displayWidth * 0.07) + "px";
+    el.style.height = (displayHeight * 0.026) + "px";
   });
 }
 window.addEventListener('resize', positionBanners);
