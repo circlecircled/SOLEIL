@@ -1,32 +1,592 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>hey stranger</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #f4f1e6;
-      color: #222;
-      padding: 3em 1em;
-      max-width: 650px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 2em;
-      font-weight: normal;
-      margin-bottom: 1.5em;
-      letter-spacing: 1.5px;
-    }
-    p {
-      font-size: 1.2em;
-      line-height: 1.7;
-      letter-spacing: 0.2px;
-    }
-  </style>
-</head>
-<body>
-  <h1>hey stranger</h1>
-  <p>sometimes when I'm feeling lost, I try to find the lowest point in my area, because that's usually where there's a body of water. maybe you should try that.</p>
-</body>
-</html>
+import React, { useState } from 'react';
+import { ArrowLeft, User, Palette, Image, Briefcase, Calendar, RefreshCw, Users, MessageCircle } from 'lucide-react';
+
+export default function ContactForm() {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    contactNumber: '',
+    contactEmail: '',
+    inquiryType: '',
+    description: '',
+    details: '',
+    size: '',
+    timescale: '',
+    budget: '',
+    portraitType: '',
+    medium: '',
+    classDetails: '',
+    ageGroup: '',
+    groupType: '',
+    questions: '',
+    itemRequested: '',
+    offering: '',
+    projectDescription: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const updateField = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNext = () => {
+    setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    setStep(step - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Prepare email content
+    const emailBody = `
+New Contact Form Submission
+
+Contact Information:
+- Name: ${formData.fullName}
+- Phone: ${formData.contactNumber}
+- Email: ${formData.contactEmail}
+
+Inquiry Type: ${formData.inquiryType}
+
+${formData.inquiryType === 'Mural' ? `
+Description: ${formData.description}
+Size: ${formData.size}
+Timescale: ${formData.timescale}
+Budget: ${formData.budget}
+` : ''}
+
+${formData.inquiryType === 'Portrait' ? `
+Portrait Type: ${formData.portraitType}
+Medium: ${formData.medium}
+` : ''}
+
+${formData.inquiryType === 'Other Commission' ? `
+Description: ${formData.description}
+Size: ${formData.size}
+Timescale: ${formData.timescale}
+Budget: ${formData.budget}
+` : ''}
+
+${formData.inquiryType === 'Event or Class' ? `
+Class/Event Details: ${formData.classDetails}
+Age Group: ${formData.ageGroup}
+Group Type: ${formData.groupType}
+Questions: ${formData.questions}
+` : ''}
+
+${formData.inquiryType === 'Make a Trade' ? `
+Item/Service Requested: ${formData.itemRequested}
+Offering: ${formData.offering}
+` : ''}
+
+${formData.inquiryType === 'Collab' ? `
+Project Description: ${formData.projectDescription}
+` : ''}
+    `.trim();
+
+    // Note: In a real implementation, you would send this to your backend
+    // For now, this creates a mailto link as a fallback
+    const mailtoLink = `mailto:hey@soleil.love?subject=Contact Form Submission from ${encodeURIComponent(formData.fullName)}&body=${encodeURIComponent(emailBody)}`;
+    
+    console.log('Form submitted:', formData);
+    console.log('Email content:', emailBody);
+    
+    // Open mailto link (user's email client will handle sending)
+    window.location.href = mailtoLink;
+    
+    setSubmitted(true);
+  };
+
+  const inquiryOptions = [
+    { value: 'Mural', icon: Palette, label: 'Mural' },
+    { value: 'Portrait', icon: User, label: 'Portrait' },
+    { value: 'Other Commission', icon: Image, label: 'Other Commission' },
+    { value: 'Event or Class', icon: Calendar, label: 'Event or Class' },
+    { value: 'Make a Trade', icon: RefreshCw, label: 'Make a Trade' },
+    { value: 'Collab', icon: Users, label: 'Collab' },
+    { value: 'Just Say Hi', icon: MessageCircle, label: 'Just Say Hi' }
+  ];
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="text-6xl mb-4">✨</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            I can't wait to make something beautiful together.
+          </h2>
+          <p className="text-lg text-gray-600">
+            I shall be in touch shortly.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (formData.inquiryType === 'Just Say Hi' && step === 3) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="text-6xl mb-4">🎉</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Felicitations!!
+          </h2>
+          <p className="text-lg text-gray-600 mb-6">
+            Sign my guestbook here!
+          </p>
+          <a
+            href="https://soleil.love"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all"
+          >
+            Visit Guestbook
+          </a>
+          <button
+            onClick={() => setStep(2)}
+            className="mt-6 text-gray-600 hover:text-gray-800 flex items-center justify-center gap-2 mx-auto"
+          >
+            <ArrowLeft size={20} />
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full">
+        {step > 1 && (
+          <button
+            onClick={handleBack}
+            className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back
+          </button>
+        )}
+
+        <div className="mb-8">
+          <div className="flex gap-2 mb-2">
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className={`h-2 flex-1 rounded-full transition-colors ${
+                  s <= step ? 'bg-gradient-to-r from-pink-500 to-purple-500' : 'bg-gray-200'
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-sm text-gray-600">Step {step} of 3</p>
+        </div>
+
+        {step === 1 && (
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Let's get in touch</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(e) => updateField('fullName', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Number *
+                </label>
+                <input
+                  type="tel"
+                  value={formData.contactNumber}
+                  onChange={(e) => updateField('contactNumber', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Email *
+                </label>
+                <input
+                  type="email"
+                  value={formData.contactEmail}
+                  onChange={(e) => updateField('contactEmail', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <button
+                onClick={handleNext}
+                disabled={!formData.fullName || !formData.contactNumber || !formData.contactEmail}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">What brings you here?</h2>
+            <div className="grid grid-cols-2 gap-4">
+              {inquiryOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      updateField('inquiryType', option.value);
+                      handleNext();
+                    }}
+                    className="flex flex-col items-center justify-center p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all group"
+                  >
+                    <Icon size={32} className="text-gray-600 group-hover:text-purple-600 mb-2" />
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700 text-center">
+                      {option.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Mural' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Tell me about your mural</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description & Details *
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => updateField('description', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Size *
+                </label>
+                <input
+                  type="text"
+                  value={formData.size}
+                  onChange={(e) => updateField('size', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Timescale *
+                </label>
+                <input
+                  type="text"
+                  value={formData.timescale}
+                  onChange={(e) => updateField('timescale', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Budget *
+                </label>
+                <input
+                  type="text"
+                  value={formData.budget}
+                  onChange={(e) => updateField('budget', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Portrait' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Portrait details</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Portrait Type *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['Traditional', 'Boudoir', 'Funerary', 'Pet Portrait'].map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => updateField('portraitType', type)}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all ${
+                        formData.portraitType === type
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 hover:border-purple-300'
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Medium *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['Oil', 'Watercolour'].map((medium) => (
+                    <button
+                      key={medium}
+                      type="button"
+                      onClick={() => updateField('medium', medium)}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all ${
+                        formData.medium === medium
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 hover:border-purple-300'
+                      }`}
+                    >
+                      {medium}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={!formData.portraitType || !formData.medium}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Other Commission' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Tell me about your commission</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description & Details *
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => updateField('description', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Size *
+                </label>
+                <input
+                  type="text"
+                  value={formData.size}
+                  onChange={(e) => updateField('size', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Timescale *
+                </label>
+                <input
+                  type="text"
+                  value={formData.timescale}
+                  onChange={(e) => updateField('timescale', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Budget *
+                </label>
+                <input
+                  type="text"
+                  value={formData.budget}
+                  onChange={(e) => updateField('budget', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Event or Class' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Event or class details</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  What class or event? *
+                </label>
+                <textarea
+                  value={formData.classDetails}
+                  onChange={(e) => updateField('classDetails', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Age Group *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['Youth', 'Adult'].map((age) => (
+                    <button
+                      key={age}
+                      type="button"
+                      onClick={() => updateField('ageGroup', age)}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all ${
+                        formData.ageGroup === age
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 hover:border-purple-300'
+                      }`}
+                    >
+                      {age}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Group Type *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {['Private', 'Group'].map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => updateField('groupType', type)}
+                      className={`py-3 px-4 rounded-lg border-2 transition-all ${
+                        formData.groupType === type
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 hover:border-purple-300'
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Any questions?
+                </label>
+                <textarea
+                  value={formData.questions}
+                  onChange={(e) => updateField('questions', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={!formData.classDetails || !formData.ageGroup || !formData.groupType}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Make a Trade' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Let's make a trade</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Item or service requested *
+                </label>
+                <textarea
+                  value={formData.itemRequested}
+                  onChange={(e) => updateField('itemRequested', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  What would you like to offer? *
+                </label>
+                <textarea
+                  value={formData.offering}
+                  onChange={(e) => updateField('offering', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === 3 && formData.inquiryType === 'Collab' && (
+          <form onSubmit={handleSubmit}>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Tell me about your collaboration</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Project Description *
+                </label>
+                <textarea
+                  value={formData.projectDescription}
+                  onChange={(e) => updateField('projectDescription', e.target.value)}
+                  rows={6}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                  placeholder="Tell me about your project, what you're looking for, and how we might work together..."
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
