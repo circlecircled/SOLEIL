@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]
   <link rel="stylesheet" href="cursor.css">
+  <link href="https://fonts.googleapis.com/css2?family=Amarante&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
@@ -78,10 +79,29 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
+    /* Text Box - tinted red for visibility */
+    .text-box {
+      position: absolute;
+      display: block;
+      background: transparent;
+      border-radius: 6px;
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 10;
+      color: #000;
+      font-family: 'Amarante', serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .image-wrapper {
         padding: 10px;
+      }
+      .text-box {
+        font-size: 14px;
+        padding: 15px;
       }
     }
   </style>
@@ -96,6 +116,9 @@
     <a id="banner-oeuvre" class="banner-link" href="oeuvre.html" title="Oeuvre"></a>
     <a id="banner-tome" class="banner-link" href="tome.html" title="Tome"></a>
     <a id="cv-button" class="cv-button" href="https://raw.githubusercontent.com/circlecircled/images/main/cv.JPG" target="_blank" title="View CV"></a>
+    <div id="text-box" class="text-box">
+      Your text content goes here. This is a sample text box that scales with the image.
+    </div>
   </div>
 </div>
 
@@ -115,6 +138,15 @@ const cvButtonConfig = {
   topPercent: 0.615,    // 61.5% from top
   widthPercent: 0.6,    // 60% of image width
   heightPercent: 0.0267 // Height relative to image
+};
+
+// Text box configuration - fixed relationship to image
+const textBoxConfig = {
+  id: 'text-box',
+  leftPercent: 0.10,    // 10% from left (to center the wider box)
+  topPercent: 0.46,     // 46% from top
+  widthPercent: 0.8,    // 80% of image width
+  heightPercent: 0.15   // 15% of image height
 };
 
 function positionBanners() {
@@ -151,6 +183,20 @@ function positionBanners() {
     cvButton.style.top = topPos + "px";
     cvButton.style.width = buttonWidth + "px";
     cvButton.style.height = buttonHeight + "px";
+  }
+
+  // Position text box - using percentage-based positioning
+  const textBox = document.getElementById(textBoxConfig.id);
+  if (textBox) {
+    const boxWidth = imgWidth * textBoxConfig.widthPercent;
+    const boxHeight = imgHeight * textBoxConfig.heightPercent;
+    const leftPos = imgWidth * textBoxConfig.leftPercent;
+    const topPos = imgHeight * textBoxConfig.topPercent;
+    
+    textBox.style.left = leftPos + "px";
+    textBox.style.top = topPos + "px";
+    textBox.style.width = boxWidth + "px";
+    textBox.style.height = boxHeight + "px";
   }
 }
 
