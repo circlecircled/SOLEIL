@@ -132,10 +132,12 @@ function positionBanners() {
     el.style.width = w + "px";
     el.style.height = h + "px";
 
-        el.style.left = (imgWidth * left) + "px";
+    // left/top values are percentages of the image width/height and indicate the element's top-left corner
+    el.style.left = (imgWidth * left) + "px";
     el.style.top = (imgHeight * top) + "px";
 
-       if (shape === 'round' || el.classList.contains('round')) {
+    // For round/pill styling, set border-radius to half the smaller dimension so ovals remain fully rounded
+    if (shape === 'round' || el.classList.contains('round')) {
       el.style.borderRadius = (Math.min(w, h) / 2) + "px";
     } else if (el.classList.contains('rect')) {
       el.style.borderRadius = "8px";
