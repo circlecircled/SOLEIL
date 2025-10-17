@@ -1,10 +1,33 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery</title>
   <style>
+    :root {
+      /* Diameter of the circular frame as a proportion of the viewport (vmin-based for proportional scaling) */
+      --frame-size: 70vmin;
+
+      /* Percentage-based positioning (0 to 100) for the frame CENTER relative to the background image */
+      --frame-x: 49.5;
+      --frame-y: 20.5;
+
+      /* Percentage-based positioning (0 to 100) for the gallery center within the circular frame */
+      --center-x: 50; /* center within frame */
+      --center-y: 50; /* center within frame */
+
+      /* Card size derived from the frame size for proportional scaling */
+      --card-w: calc(var(--frame-size) * 0.24);
+      --card-h: calc(var(--frame-size) * 0.38);
+
+      /* Spiral travel distance relative to frame size (no px units) */
+      --travel: calc(var(--frame-size) * 0.9);
+
+      /* Match oeuvre.html scaling cap */
+      --bg-max-width: 1400px;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,36 +35,80 @@
     }
 
     html, body {
-      height: 100%;
-      display: flex;
-      background: #00141d;
-      overflow: hidden;
+      min-height: 100%;
+      /* Orange shows around/below the image like oeuvre.html */
+      background: #ff8c00;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body {
       width: 100%;
-      margin: auto;
+    }
+
+    /* Top-centered responsive image in normal flow; determines page length like oeuvre.html */
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: var(--bg-max-width);
+      margin: 0 auto;
+      padding: 20px; /* mirrors oeuvre.html */
+      box-sizing: border-box;
+      z-index: 0;
+    }
+    .img-container {
+      position: relative; /* anchor for overlays */
+      width: 100%;
+      margin: 0 auto;
+    }
+    .img-bg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none; /* decorative */
+    }
+
+    /* Circular frame is ABSOLUTE and locked to the background image coordinates */
+    .circle-frame {
+      position: absolute; /* scrolls with the image */
+      /* top/left will be set via JS to lock to the image at (--frame-x, --frame-y) as the FRAME CENTER */
+      width: var(--frame-size);
+      height: var(--frame-size);
+      border-radius: 50%;
+      overflow: hidden; /* clip contents to the circle */
+      z-index: 2;       /* above the background image */
+      will-change: left, top; /* smoother reposition on resize */
     }
 
     .spiral-container {
       position: relative;
       width: 100%;
-      height: 100vh;
+      height: 100%;
+      /* Keep a dark inner background for contrast within the circular frame */
+      background: #00141d;
+    }
+
+    /* Wrapper that defines the gallery's center inside the frame with percentage-based positioning */
+    .spiral-center {
+      position: absolute;
+      top: calc(var(--center-y) * 1%);
+      left: calc(var(--center-x) * 1%);
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
     }
 
     .spiral-item {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 280px;
-      height: 450px;
-      margin-top: -225px;
-      margin-left: -140px;
+      top: 0;
+      left: 0;
+      width: var(--card-w);
+      height: var(--card-h);
       transform-origin: center bottom;
       animation: spiral 120s linear infinite, fade 110s linear infinite both;
     }
-
-    
 
     .trapezoid {
       position: relative;
@@ -58,41 +125,90 @@
       clip-path: polygon(5% 0%, 95% 0%, 70% 100%, 30% 100%);
       border-radius: 100px;
     }
-    
 
     @keyframes spiral {
       0% {
-        transform: scale(0.05) rotate(0turn) translateY(0);
+        transform: translate(-50%, -50%) scale(0.05) rotate(0turn) translateY(0);
       }
       100% {
-        transform: scale(1.8) rotate(-2.5turn) translateY(calc(-5vh - 500px));
+        transform: translate(-50%, -50%) scale(1.8) rotate(-2.5turn) translateY(calc(-1 * var(--travel)));
       }
     }
 
     @keyframes fade {
-      0%, 10% { 
+      0%, 10% {
         opacity: 0;
       }
-      25%, 40% { 
+      25%, 40% {
         opacity: 1;
       }
-      50%, 100% {
+      50%, 80% {
         opacity: 0;
       }
     }
-
-    }
   </style>
-  
 </head>
 <body>
-  <div class="spiral-container" id="spiralContainer">
-    <div class="pause-zone" id="pauseZone"></div>
+  <!-- Responsive top-centered image in normal flow; determines page length like oeuvre.html -->
+  <div class="image-wrapper">
+    <div class="img-container" id="img-container">
+      <img
+        id="bg-image"
+        class="img-bg"
+        src="https://raw.githubusercontent.com/circlecircled/images/main/oeuvre.png"
+        alt="Background"
+        loading="eager"
+        decoding="async"
+      />
+
+      <!-- Circular frame locked to the image at (--frame-x, --frame-y) -->
+      <div class="circle-frame" id="circleFrame">
+        <div class="spiral-container">
+          <!-- Percentage-based center for the spiral inside the frame -->
+          <div class="spiral-center" id="spiralCenter"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const container = document.getElementById('spiralContainer');
-    
+    // Position the circular frame so that its CENTER is at (--frame-x%, --frame-y%) of the background image
+    function positionFrame() {
+      const img = document.getElementById('bg-image');
+      const frame = document.getElementById('circleFrame');
+      if (!img || !frame) return;
+
+      if (!img.complete || img.naturalWidth === 0) return;
+
+      const imgWidth = img.offsetWidth;
+      const imgHeight = img.offsetHeight;
+
+      // Read percentages from CSS variables
+      const rootStyles = getComputedStyle(document.documentElement);
+      const fx = parseFloat(rootStyles.getPropertyValue('--frame-x')) / 100; // 0..1
+      const fy = parseFloat(rootStyles.getPropertyValue('--frame-y')) / 100; // 0..1
+
+      // Frame size in pixels (already responsive due to vmin)
+      const frameW = frame.offsetWidth;
+      const frameH = frame.offsetHeight;
+
+      // Place the frame so its center sits at (fx, fy) of the image area
+      const left = (imgWidth * fx) - (frameW / 2);
+      const top  = (imgHeight * fy) - (frameH / 2);
+
+      frame.style.left = left + 'px';
+      frame.style.top = top + 'px';
+    }
+
+    // Reposition on load and resize (similar to oeuvre.html banner positioning)
+    window.addEventListener('resize', positionFrame);
+    document.getElementById('bg-image').addEventListener('load', positionFrame);
+    if (document.getElementById('bg-image').complete) {
+      positionFrame();
+    }
+
+    // Build spiral items
+    const container = document.getElementById('spiralCenter');
     const imageUrls = [
       'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=600&fit=crop',
       'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=600&fit=crop',
@@ -125,23 +241,60 @@
     imageUrls.forEach((url, index) => {
       const item = document.createElement('div');
       item.className = 'spiral-item';
-      
+
       const trapezoid = document.createElement('div');
       trapezoid.className = 'trapezoid';
-      
+
       const img = document.createElement('img');
       img.src = url;
       img.alt = `Image ${index + 1}`;
-      
+
       trapezoid.appendChild(img);
       item.appendChild(trapezoid);
-      
+
       const percent = index / totalItems;
-      
       item.style.animationDelay = `${-1.5 * duration + duration * percent}s, ${-0.5 * duration + duration * percent}s`;
-      
+
       container.appendChild(item);
     });
+    (function () {
+  const repoImages = [
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/SUN.jpg",
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/AM.jpg",
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/CLOUD.jpg",
+  ];
+  const alts = ["Sun", "AM", "Clouds"];
+
+  function swapImg(img, i) {
+    const url = repoImages[i % repoImages.length];
+    const alt = alts[i % alts.length];
+
+    // Replace src/srcset
+    img.src = url;
+    if (img.srcset) img.removeAttribute("srcset");
+    img.loading = img.loading || "lazy";
+    img.alt = alt;
+
+    // If wrapped in a link to Unsplash, update that too
+    const a = img.closest("a");
+    if (a && /images\.unsplash\.com/.test(a.href)) {
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+    }
+  }
+
+  function run() {
+    const imgs = Array.from(document.querySelectorAll('img[src*="images.unsplash.com"]'));
+    imgs.forEach(swapImg);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+})();
   </script>
 </body>
 </html>
