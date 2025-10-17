@@ -1,30 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>SOLEIL</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]
-    <link rel="stylesheet" href="cursor.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
   <style>
-    html, body {
+    :root {
+      /* Diameter of the circular frame as a proportion of the viewport (vmin-based for proportional scaling) */
+      --frame-size: 70vmin;
+
+      /* Percentage-based positioning (0 to 100) for the frame CENTER relative to the background image */
+      --frame-x: 49.5;
+      --frame-y: 20.5;
+
+      /* Percentage-based positioning (0 to 100) for the gallery center within the circular frame */
+      --center-x: 50; /* center within frame */
+      --center-y: 50; /* center within frame */
+
+      /* Card size derived from the frame size for proportional scaling */
+      --card-w: calc(var(--frame-size) * 0.24);
+      --card-h: calc(var(--frame-size) * 0.38);
+
+      /* Spiral travel distance relative to frame size (no px units) */
+      --travel: calc(var(--frame-size) * 0.9);
+
+      /* Match oeuvre.html scaling cap */
+      --bg-max-width: 1400px;
+    }
+
+    * {
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #f7a048;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100%;
+      /* Orange shows around/below the image like oeuvre.html */
+      background: #ff8c00;
       overflow-x: hidden;
       overflow-y: auto;
     }
+
+    body {
+      width: 100%;
+    }
+
+    /* Top-centered responsive image in normal flow; determines page length like oeuvre.html */
     .image-wrapper {
       position: relative;
       width: 100%;
-      max-width: 1400px;
+      max-width: var(--bg-max-width);
       margin: 0 auto;
-      padding: 20px;
+      padding: 20px; /* mirrors oeuvre.html */
       box-sizing: border-box;
+      z-index: 0;
     }
     .img-container {
-      position: relative;
+      position: relative; /* anchor for overlays */
       width: 100%;
       margin: 0 auto;
     }
@@ -32,130 +65,198 @@
       width: 100%;
       height: auto;
       display: block;
-      user-drag: none;
+      user-select: none;
       -webkit-user-drag: none;
-      pointer-events: none;
-    }
-    .banner-link {
-      position: absolute;
-      display: block;
-      background: transparent;
-      border-radius: 6px;
-      pointer-events: auto;
-      cursor: pointer;
-      z-index: 10;
-      margin: 0;
-      border: none;
-      opacity: 0.92;
-      text-decoration: none;
-      transition: background 0.2s;
-      color: transparent;
-      font-size: 0;
-      line-height: 0;
-    }
-    .banner-link:hover {
-      background: rgba(255, 255, 255, 0.1);
+      pointer-events: none; /* decorative */
     }
 
-    /* Specific shapes */
-    .banner-link.round {
+    /* Circular frame is ABSOLUTE and locked to the background image coordinates */
+    .circle-frame {
+      position: absolute; /* scrolls with the image */
+      /* top/left will be set via JS to lock to the image at (--frame-x, --frame-y) as the FRAME CENTER */
+      width: var(--frame-size);
+      height: var(--frame-size);
       border-radius: 50%;
-    }
-    .banner-link.rect {
-      border-radius: 8px;
+      overflow: hidden; /* clip contents to the circle */
+      z-index: 2;       /* above the background image */
+      will-change: left, top; /* smoother reposition on resize */
     }
 
+    .spiral-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      /* Keep a dark inner background for contrast within the circular frame */
+      background: #00141d;
+    }
 
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-      .image-wrapper {
-        padding: 10px;
+    /* Wrapper that defines the gallery's center inside the frame with percentage-based positioning */
+    .spiral-center {
+      position: absolute;
+      top: calc(var(--center-y) * 1%);
+      left: calc(var(--center-x) * 1%);
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+    }
+
+    .spiral-item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--card-w);
+      height: var(--card-h);
+      transform-origin: center bottom;
+      animation: spiral 120s linear infinite, fade 110s linear infinite both;
+    }
+
+    .trapezoid {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .trapezoid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.15);
+      clip-path: polygon(5% 0%, 95% 0%, 70% 100%, 30% 100%);
+      border-radius: 100px;
+    }
+
+    @keyframes spiral {
+      0% {
+        transform: translate(-50%, -50%) scale(0.05) rotate(0turn) translateY(0);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.8) rotate(-2.5turn) translateY(calc(-1 * var(--travel)));
+      }
+    }
+
+    @keyframes fade {
+      0%, 10% {
+        opacity: 0;
+      }
+      25%, 40% {
+        opacity: 1;
+      }
+      50%, 100% {
+        opacity: 0;
       }
     }
   </style>
 </head>
 <body>
-<div class="image-wrapper">
-  <div class="img-container" id="img-container">
-    <img id="main-image" class="img-bg" src="https://raw.githubusercontent.com/circlecircled/images/main/oeuvre.png" alt="Background" draggable="false"/>
-    <a id="banner-ethos" class="banner-link" href="ethos.html" title="Ethos"></a>
-    <a id="banner-engage" class="banner-link" href="engage.html" title="Engage"></a>
-    <a id="banner-home" class="banner-link" href="index.html" title="Home"></a>
-    <a id="banner-oeuvre" class="banner-link" href="oeuvre.html" title="Oeuvre"></a>
-    <a id="banner-tome" class="banner-link" href="tome.html" title="Tome"></a>
+  <!-- Responsive top-centered image in normal flow; determines page length like oeuvre.html -->
+  <div class="image-wrapper">
+    <div class="img-container" id="img-container">
+      <img
+        id="bg-image"
+        class="img-bg"
+        src="https://raw.githubusercontent.com/circlecircled/images/main/oeuvre.png"
+        alt="Background"
+        loading="eager"
+        decoding="async"
+      />
 
-  
-    <a id="btn-gallery" class="banner-link rect tint-red" href="gallery.html" title="Gallery" aria-label="Gallery"></a>
-
-    <a id="btn-portraits" class="banner-link round tint-red" href="portraits.html" title="Portraits" aria-label="Portraits"></a>
-    <a id="btn-murals" class="banner-link round tint-red" href="murals.html" title="Murals" aria-label="Murals"></a>
-    <a id="btn-placeholder" class="banner-link round tint-red" href="#" title="Placeholder" aria-label="Placeholder"></a>
-    <a id="btn-trading" class="banner-link rect tint-red" href="trading-post.html" title="Trading Post" aria-label="Trading Post"></a>
+      <!-- Circular frame locked to the image at (--frame-x, --frame-y) -->
+      <div class="circle-frame" id="circleFrame">
+        <div class="spiral-container">
+          <!-- Percentage-based center for the spiral inside the frame -->
+          <div class="spiral-center" id="spiralCenter"></div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
-const banners = [
-  { id: 'banner-ethos',   left: 0.12, top: 0.03 },
-  { id: 'banner-oeuvre',  left: 0.25, top: 0.03 },
-  { id: 'banner-home',    left: 0.45, top: 0.03 },
-  { id: 'banner-engage',  left: 0.64, top: 0.03 },
-  { id: 'banner-tome',    left: 0.77, top: 0.03 },
+  <script>
+    // Position the circular frame so that its CENTER is at (--frame-x%, --frame-y%) of the background image
+    function positionFrame() {
+      const img = document.getElementById('bg-image');
+      const frame = document.getElementById('circleFrame');
+      if (!img || !frame) return;
 
+      if (!img.complete || img.naturalWidth === 0) return;
 
-  { id: 'btn-gallery', left: 0.05, top: 0.340, widthPct: 0.91, heightPct: 0.149 },
+      const imgWidth = img.offsetWidth;
+      const imgHeight = img.offsetHeight;
 
+      // Read percentages from CSS variables
+      const rootStyles = getComputedStyle(document.documentElement);
+      const fx = parseFloat(rootStyles.getPropertyValue('--frame-x')) / 100; // 0..1
+      const fy = parseFloat(rootStyles.getPropertyValue('--frame-y')) / 100; // 0..1
 
-  { id: 'btn-portraits', left: 0.13, top: 0.568, widthPct: 0.2, heightPct: 0.06, shape: 'round' },
-  { id: 'btn-murals',    left: 0.4, top: 0.559, widthPct: 0.2, heightPct: 0.06, shape: 'round' },
-  { id: 'btn-placeholder', left: 0.67, top: 0.568, widthPct: 0.2, heightPct: 0.06, shape: 'round' },
+      // Frame size in pixels (already responsive due to vmin)
+      const frameW = frame.offsetWidth;
+      const frameH = frame.offsetHeight;
 
+      // Place the frame so its center sits at (fx, fy) of the image area
+      const left = (imgWidth * fx) - (frameW / 2);
+      const top  = (imgHeight * fy) - (frameH / 2);
 
-  { id: 'btn-trading', left: 0.10, top: 0.65, widthPct: 0.80, heightPct: 0.06, shape: 'rect' }
-];
-
-function positionBanners() {
-  const img = document.getElementById('main-image');
-  if (!img) return;
-  
-  if (!img.complete || img.naturalWidth === 0) return;
-  
-  const imgWidth = img.offsetWidth;
-  const imgHeight = img.offsetHeight;
-  
-  banners.forEach(({id, left, top, widthPct, heightPct, shape}) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    
-    const defaultWidth = imgWidth * 0.07;
-    const defaultHeight = imgHeight * 0.026;
-
-    const w = (typeof widthPct === 'number') ? imgWidth * widthPct : defaultWidth;
-    const h = (typeof heightPct === 'number') ? imgHeight * heightPct : defaultHeight;
-
-    el.style.width = w + "px";
-    el.style.height = h + "px";
-
-    // left/top values are percentages of the image width/height and indicate the element's top-left corner
-    el.style.left = (imgWidth * left) + "px";
-    el.style.top = (imgHeight * top) + "px";
-
-    // For round/pill styling, set border-radius to half the smaller dimension so ovals remain fully rounded
-    if (shape === 'round' || el.classList.contains('round')) {
-      el.style.borderRadius = (Math.min(w, h) / 2) + "px";
-    } else if (el.classList.contains('rect')) {
-      el.style.borderRadius = "8px";
+      frame.style.left = left + 'px';
+      frame.style.top = top + 'px';
     }
-  });
-}
 
-window.addEventListener('resize', positionBanners);
-document.getElementById('main-image').addEventListener('load', positionBanners);
+    // Reposition on load and resize (similar to oeuvre.html banner positioning)
+    window.addEventListener('resize', positionFrame);
+    document.getElementById('bg-image').addEventListener('load', positionFrame);
+    if (document.getElementById('bg-image').complete) {
+      positionFrame();
+    }
 
-// Position on load if image is cached
-if (document.getElementById('main-image').complete) {
-  positionBanners();
-}
-</script>
+    // Build spiral items
+    const container = document.getElementById('spiralCenter');
+    const imageUrls = [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1484406566174-9da000fda645?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1465056836041-7f43ac27dcb5?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1540206395-68808572332f?w=400&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=400&h=600&fit=crop'
+    ];
+
+    const totalItems = imageUrls.length;
+    const duration = 120;
+
+    imageUrls.forEach((url, index) => {
+      const item = document.createElement('div');
+      item.className = 'spiral-item';
+
+      const trapezoid = document.createElement('div');
+      trapezoid.className = 'trapezoid';
+
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `Image ${index + 1}`;
+
+      trapezoid.appendChild(img);
+      item.appendChild(trapezoid);
+
+      const percent = index / totalItems;
+      item.style.animationDelay = `${-1.5 * duration + duration * percent}s, ${-0.5 * duration + duration * percent}s`;
+
+      container.appendChild(item);
+    });
+  </script>
 </body>
 </html>
