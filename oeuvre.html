@@ -142,7 +142,7 @@
       25%, 40% {
         opacity: 1;
       }
-      50%, 100% {
+      50%, 80% {
         opacity: 0;
       }
     }
@@ -257,6 +257,44 @@
 
       container.appendChild(item);
     });
+    (function () {
+  const repoImages = [
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/SUN.jpg",
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/AM.jpg",
+    "https://raw.githubusercontent.com/circlecircled/images/59978a719bda3dd0c8baf6a7aee2e66fc914aeaa/CLOUD.jpg",
+  ];
+  const alts = ["Sun", "AM", "Clouds"];
+
+  function swapImg(img, i) {
+    const url = repoImages[i % repoImages.length];
+    const alt = alts[i % alts.length];
+
+    // Replace src/srcset
+    img.src = url;
+    if (img.srcset) img.removeAttribute("srcset");
+    img.loading = img.loading || "lazy";
+    img.alt = alt;
+
+    // If wrapped in a link to Unsplash, update that too
+    const a = img.closest("a");
+    if (a && /images\.unsplash\.com/.test(a.href)) {
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+    }
+  }
+
+  function run() {
+    const imgs = Array.from(document.querySelectorAll('img[src*="images.unsplash.com"]'));
+    imgs.forEach(swapImg);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+})();
   </script>
 </body>
 </html>
