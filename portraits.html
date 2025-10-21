@@ -3,7 +3,7 @@
 <head>
   <title>SOLEIL</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]" />
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAACAAEAICAAAA8ADwCoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA[...]">
    <link rel="stylesheet" href="cursor.css">
   <style>
     html, body {
@@ -34,8 +34,10 @@
       display: block;
       user-drag: none;
       -webkit-user-drag: none;
-      pointer-events: none;
+      pointer-events: none; /* allow overlays to be clickable */
     }
+
+    /* Existing invisible banner hit areas */
     .banner-link {
       position: absolute;
       display: block;
@@ -57,43 +59,31 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    /* Round buttons (2x2 grid) */
-    .button-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 140px);
-      gap: 16px;
-      justify-content: center;
-      margin: 24px auto 40px;
-      padding: 0 20px;
-    }
-    .round-btn {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 140px;
-      aspect-ratio: 1 / 1;
+    /* New: four round, red-tinted overlay buttons positioned by percentages */
+    .round-link {
+      position: absolute;
+      display: block;
+      width: 8%;               /* percent of container width */
+      aspect-ratio: 1 / 1;     /* keep circles responsive */
       border-radius: 50%;
+      background: rgba(220, 0, 0, 0.36); /* red tint */
+      border: 2px solid rgba(180, 0, 0, 0.35);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+      transform: translate(-50%, -50%);  /* center on the given top/left */
+      z-index: 20;
+      cursor: pointer;
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
       text-decoration: none;
-      border: 2px solid rgba(0,0,0,0.06);
-      background: #ffffff;
-      color: #222;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      color: transparent;      /* hide any text nodes visually */
     }
-    .round-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
-      background: #fefefe;
+    .round-link:hover {
+      background: rgba(220, 0, 0, 0.5);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      transform: translate(-50%, -50%) scale(1.03);
     }
-    .round-btn:focus-visible {
-      outline: 3px solid #222;
-      outline-offset: 3px;
-    }
-    .round-btn span {
-      pointer-events: none;
+    .round-link:focus-visible {
+      outline: 3px solid rgba(255,255,255,0.85);
+      outline-offset: 2px;
     }
 
     /* Mobile adjustments */
@@ -101,15 +91,13 @@
       .image-wrapper {
         padding: 10px;
       }
+      .round-link {
+        width: 10%;
+      }
     }
     @media (max-width: 480px) {
-      .button-grid {
-        grid-template-columns: repeat(2, minmax(110px, 1fr));
-        gap: 12px;
-        padding: 0 16px;
-      }
-      .round-btn {
-        width: 100%;
+      .round-link {
+        width: 12%;
       }
     }
   </style>
@@ -118,21 +106,22 @@
 <div class="image-wrapper">
   <div class="img-container" id="img-container">
     <img id="main-image" class="img-bg" src="https://raw.githubusercontent.com/circlecircled/images/main/portraits.png" alt="Background" draggable="false"/>
+    <!-- existing top navigation hit targets -->
     <a id="banner-ethos" class="banner-link" href="ethos.html" title="Ethos"></a>
     <a id="banner-engage" class="banner-link" href="engage.html" title="Engage"></a>
     <a id="banner-home" class="banner-link" href="index.html" title="Home"></a>
     <a id="banner-oeuvre" class="banner-link" href="oeuvre.html" title="Oeuvre"></a>
     <a id="banner-tome" class="banner-link" href="tome.html" title="Tome"></a>
+
+    <!-- NEW: four red-tinted round buttons, positioned with percentages; two per row -->
+    <!-- Row 1 at ~50% (halfway down) -->
+    <a id="round-1" class="round-link" href="#" title="Action 1" aria-label="Action 1" style="top: 54%; left: 27%;"></a>
+    <a id="round-2" class="round-link" href="#" title="Action 2" aria-label="Action 2" style="top: 54%; left: 75%;"></a>
+    <!-- Row 2 slightly below -->
+    <a id="round-3" class="round-link" href="#" title="Action 3" aria-label="Action 3" style="top: 66%; left: 27%;"></a>
+    <a id="round-4" class="round-link" href="#" title="Action 4" aria-label="Action 4" style="top: 66%; left: 75%;"></a>
   </div>
 </div>
-
-<!-- New round buttons: two per row -->
-<nav class="button-grid" role="navigation" aria-label="Portraits actions">
-  <a class="round-btn" id="btn-1" href="#" title="Button 1"><span>One</span></a>
-  <a class="round-btn" id="btn-2" href="#" title="Button 2"><span>Two</span></a>
-  <a class="round-btn" id="btn-3" href="#" title="Button 3"><span>Three</span></a>
-  <a class="round-btn" id="btn-4" href="#" title="Button 4"><span>Four</span></a>
-</nav>
 
 <script>
 const banners = [
@@ -145,20 +134,19 @@ const banners = [
 
 function positionBanners() {
   const img = document.getElementById('main-image');
-  const container = document.getElementById('img-container');
-  
+
   if (!img.complete || img.naturalWidth === 0) return;
-  
+
   const imgWidth = img.offsetWidth;
   const imgHeight = img.offsetHeight;
-  
+
   banners.forEach(({id, left, top}) => {
     const el = document.getElementById(id);
     if (!el) return;
-    
+
     const buttonWidth = imgWidth * 0.07;
     const buttonHeight = imgHeight * 0.026;
-    
+
     el.style.left = (imgWidth * left) + "px";
     el.style.top = (imgHeight * top) + "px";
     el.style.width = buttonWidth + "px";
